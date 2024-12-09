@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(cuid())
+  nome        String
+  login       String       @unique
+  senha       String
+  funcaoId    String
+  funcao      Funcao       @relation(fields: [funcaoId], references: [id])
+  occurrences Occurrence[]
+  foto        String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Funcao {
+  id          String  @id @default(cuid())
+  nome        String  @unique
+  poder       Int     @default(1) // Validação deve ser tratada na aplicação
+  usuarios    User[]
+}
+
+model Turma {
+  id     String    @id @default(cuid())
+  nome   String
+  ano    Int
+  alunos Student[]
+  @@unique([nome, ano])
+}
+
+model Student {
+  id              String        @id @default(cuid())
+  nome            String
+  email           String        @unique
+  emailP          String?
+  tel             String?
+  telP            String?
+  turmaId         String
+  turma           Turma         @relation(fields: [turmaId], references: [id])
+  data_nascimento DateTime
+  occurrences     Occurrence[]
+  tipoCounter     TipoCounter[]
+  fotoPath        String?       // Caminho para o arquivo da foto no servidor
+}
+
+model Occurrence {
+  id        String   @id @default(cuid())
+  alunoId   String
+  usuarioId String
+  data      DateTime
+  tipoId    String
+  tipo      Tipo     @relation(fields: [tipoId], references: [id])
+  descricao String
+  decisao   String
+  resolvida Boolean  @default(false)
+  usuario   User     @relation(fields: [usuarioId], references: [id])
+  aluno     Student  @relation(fields: [alunoId], references: [id])
+}
+
+model Tipo {
+  id          String        @id @default(cuid())
+  nome        String        @unique
+  gravidade   Int
+  occurrences Occurrence[]
+  TipoCounter TipoCounter[]
+}
+
+model TipoCounter {
+  id      String  @id @default(cuid())
+  alunoId String
+  tipoId  String
+  count   Int     @default(0)
+  aluno   Student @relation(fields: [alunoId], references: [id])
+  tipo    Tipo    @relation(fields: [tipoId], references: [id])
+}
