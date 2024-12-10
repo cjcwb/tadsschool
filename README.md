@@ -18,7 +18,8 @@ TADS-School é um sistema desenvolvido para gerenciar ocorrências escolares, ot
 - **Node.js**: v16.x ou superior
 - **NPM** ou **Yarn**: Gerenciador de pacotes
 - **SQLite**: Banco de dados local
-
+- **User**: admin:admin
+- **populate.bat**: Dados Ficticios para demo
 ### **Para Produção**
 - **Servidor com suporte a Node.js**
 
